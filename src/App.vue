@@ -16,14 +16,14 @@
     </div>
     <!---Loading tasks-->
     <div class="loading" v-if="loading">Loading ...</div>
-    <div class="task-list" v-if="filter === 'all'">
+    <div class="task-list" v-else-if="filter === 'all'">
       <h3>You have {{ totalCount }} tasks left to do</h3>
-      <template v-for="task in tasks" :key="task.id">
+      <template v-for="task in state.tasks" :key="task.id">
         <TaskDetails :task="task" />
       </template>
     </div>
 
-    <div class="task-list" v-if="filter === 'favs'">
+    <div class="task-list" v-else="filter === 'favs'">
       <h3>You have {{ favCount }} tasks left to do</h3>
       <template v-for="task in favs" :key="task.id">
         <TaskDetails :task="task" />
@@ -33,21 +33,23 @@
 </template>
 
 <script setup>
-import { useTaskStore } from "./stores/TaskStore"
+import { useTaskSetupStore } from "./stores/TaskSetupStore";
 import TaskForm from "./components/TaskForm.vue";
 import TaskDetails from "./components/TaskDetail.vue"
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
-const taskStore = useTaskStore();
+const taskStore = useTaskSetupStore();
 const filter = ref('all');
 //fetch tasks
 //note: run cmd: npx json-server --w src/data/db.json
-taskStore.getTasks();
+onMounted(() => {
+  taskStore.getTasks();
+})
 // store to ref
-const { tasks, loading, favs, totalCount, favCount } = storeToRefs(taskStore)
+const { state, favs, totalCount, favCount } = storeToRefs(taskStore)
 //methods
 const setFilter = (value) => filter.value = value;
-const resetState = () => taskStore.$reset();
+const resetState = () => taskStore.reset();
 </script>
 
 <style scoped></style>

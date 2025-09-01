@@ -7,13 +7,14 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useTaskStore } from "./../stores/TaskStore"
-const taskStore = useTaskStore();
+import { useTaskSetupStore } from '../stores/TaskSetupStore';
+const { addTask } = useTaskSetupStore();
+
 const newTask = ref();
 const handleSubmit = () => {
     if (newTask.value.length > 0) {
-        taskStore.addTask({
-            id: Math.floor(Math.random() * 10000),
+        addTask({
+            id: Math.floor(Math.random() * 10000).toString,
             title: newTask.value,
             isFav: false,
         })
